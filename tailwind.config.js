@@ -6,6 +6,8 @@ export default {
       colors: {
         "light-purple": "#d19dfa",
         "light-gray": "#dee3ff",
+        "default-green": "#039b62",
+        "hover-green": "#25d367",
       },
     },
   },
