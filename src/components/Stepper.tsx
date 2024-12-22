@@ -5,19 +5,27 @@ interface StepperProps {
   currentStep: number;
   setCurrentStep: React.Dispatch<React.SetStateAction<number>>;
   numberOfSteps: number;
+  isValid: number;
 }
 
 export const Stepper: React.FC<StepperProps> = ({
   currentStep,
   setCurrentStep,
   numberOfSteps,
+  isValid
 }) => {
   const activeColor = (index: number) =>
     currentStep == index
       ? ["bg-light-purple", "text-light-purple"]
       : ["bg-light-gray", "text-light-gray"];
   const isFinalStep = (index: number) => index === numberOfSteps - 1;
-  const labelName = ["Seus Dados", "Dados do Veículo", "Endereço"];
+  const labelName = ["Crie sua conta", "Seus Dados", "Endereço"];
+
+  const possibleSteps = (index: number, isValid: number) => {
+    if (index <= isValid-1) {
+      return (setCurrentStep(index))
+    }
+  }
 
   return (
     <div className="flex flex-col items-center mt-16">
@@ -26,7 +34,7 @@ export const Stepper: React.FC<StepperProps> = ({
           <React.Fragment key={index}>
             <div className="flex justify-center items-center gap-3 mb-8">
               <div
-                onClick={() => setCurrentStep(index)}
+                onClick={() => possibleSteps(index, isValid)}
                 className={`flex w-12 h-12 rounded-full justify-center items-center text-white text-base font-bold ${
                   activeColor(index)[0]
                 }`}
