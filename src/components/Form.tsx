@@ -1,15 +1,14 @@
 import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
 import useLocalStore from "../hooks/useLocalStorage";
 import { Input } from "./Input";
-import left_arrow from "../assets/left-arrow.svg";
 import { Stepper } from "./Stepper";
 import { useState } from "react";
 
 interface UserData {
   userName: string;
   email: string;
-  tel: string;
   password: string;
+  repassword: string;
 }
 
 interface PersonalData {
@@ -21,7 +20,6 @@ interface PersonalData {
 interface Address {
   cep: string;
   street: string;
-  neighborhood: string;
   number: number;
   complement: string;
   state: string;
@@ -108,48 +106,48 @@ const isValid = (
         <form onSubmit={handleSubmit(onSubmit)}>
           {currentStep === 0 && (
             <>
-              <div className="flex w-full gap-4">
-                <div className="w-full">
-                  <Input
-                    error={errors.userData?.userName}
-                    placeholder="Seu nome de usuário"
-                    {...register("userData.userName", {
-                      required: "Nome é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.userData?.email}
-                    placeholder="E-mail"
-                    {...register("userData.email", {
-                      required: "E-mail é obrigatório",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "E-mail inválido",
-                      },
-                    })}
-                  />
-                </div>
-              </div>
-              <div className="flex w-full gap-4">
-                <div className="w-full">
-                  <Input
-                    error={errors.userData?.tel}
-                    placeholder="Telefone"
-                    {...register("userData.tel", {
-                      required: "Telefone é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.userData?.password}
-                    placeholder="Insira sua senha"
-                    {...register("userData.password", {
-                      required: "Senha é obrigatório",
-                    })}
-                  />
+              <div className="w-full flex justify-center items-center">
+                <div className="flex flex-col w-[327px] gap-4">
+                  <div className="w-full">
+                    <Input
+                      error={errors.userData?.userName}
+                      placeholder="Nome de usuário"
+                      {...register("userData.userName", {
+                        required: "Nome é obrigatório",
+                      })}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Input
+                      error={errors.userData?.email}
+                      placeholder="E-mail"
+                      {...register("userData.email", {
+                        required: "E-mail é obrigatório",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "E-mail inválido",
+                        },
+                      })}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Input
+                      error={errors.userData?.password}
+                      placeholder="Senha"
+                      {...register("userData.password", {
+                        required: "Senha é obrigatório",
+                      })}
+                    />
+                  </div>
+                  <div className="w-full">
+                    <Input
+                      error={errors.userData?.repassword}
+                      placeholder="Repita a senha"
+                      {...register("userData.repassword", {
+                        required: "Senha é obrigatório",
+                      })}
+                    />
+                  </div>
                 </div>
               </div>
             </>
@@ -160,7 +158,7 @@ const isValid = (
                 <div className="w-full">
                   <Input
                     error={errors.personalData?.fullName}
-                    placeholder="Seu nome completo"
+                    placeholder="Nome completo"
                     {...register("personalData.fullName", {
                       required: "Nome completo é obrigatório",
                     })}
@@ -169,7 +167,7 @@ const isValid = (
                 <div className="w-full">
                   <Input
                     error={errors.personalData?.cpf}
-                    placeholder="Seu CPF"
+                    placeholder="CPF"
                     {...register("personalData.cpf", {
                       required: "CPF é obrigatório",
                     })}
@@ -178,7 +176,7 @@ const isValid = (
                 <div className="w-full">
                   <Input
                     error={errors.personalData?.gender}
-                    placeholder="Seu genêro"
+                    placeholder="Gênero"
                     {...register("personalData.gender", {
                       required: "Gênero é obrigatório",
                     })}
@@ -192,15 +190,6 @@ const isValid = (
               <div className="flex flex-col w-[327px] gap-4">
                 <div className="w-full">
                   <Input
-                    error={errors.address?.cep}
-                    placeholder="Seu CEP"
-                    {...register("address.cep", {
-                      required: "Nome completo é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
                     error={errors.address?.street}
                     placeholder="Nome da sua rua"
                     {...register("address.street", {
@@ -208,32 +197,25 @@ const isValid = (
                     })}
                   />
                 </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.number}
-                    placeholder="Número da sua rua"
-                    {...register("address.number", {
-                      required: "Número da rua é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.complement}
-                    placeholder="Insira o complemento de endereço"
-                    {...register("address.complement", {
-                      required: "Complemento é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.neighborhood}
-                    placeholder="Nome do seu bairro"
-                    {...register("address.neighborhood", {
-                      required: "Bairro é obrigatório",
-                    })}
-                  />
+                <div className="flex gap-3 w-full">
+                  <div className="w-fit">
+                    <Input
+                      error={errors.address?.cep}
+                      placeholder="Seu CEP"
+                      {...register("address.cep", {
+                        required: "Nome completo é obrigatório",
+                      })}
+                    />
+                  </div>
+                  <div className="w-fit">
+                    <Input
+                      error={errors.address?.number}
+                      placeholder="N° da rua"
+                      {...register("address.number", {
+                        required: "Número da rua é obrigatório",
+                      })}
+                    />
+                  </div>
                 </div>
                 <div className="w-full">
                   <Input
@@ -259,17 +241,12 @@ const isValid = (
           <section className="flex justify-center items-center mt-6">
             <button
               type="submit"
-              className="px-8 py-5 w-[300px] h-[67.5px] border rounded-full text-white font-bold bg-default-green hover:bg-hover-green"
+              className="bg-none border text-third-green border-third-green rounded-full w-[210px] h-[50px]"
             >
               <div className="flex text-center justify-end items-center">
                 <div className="w-full flex justify-center">
-                  <p className="text-[20px]">Avançar</p>
+                  <p className="text-base">Avançar</p>
                 </div>
-                <img
-                  src={left_arrow}
-                  alt="Ícone avançar"
-                  className="ml-4 flex"
-                />
               </div>
             </button>
           </section>

@@ -1,5 +1,4 @@
 import React from "react";
-import line from "../assets/gradient-line.png";
 
 interface StepperProps {
   currentStep: number;
@@ -16,7 +15,10 @@ export const Stepper: React.FC<StepperProps> = ({
 }) => {
   const activeColor = (index: number) =>
     currentStep == index
-      ? ["bg-light-purple", "text-light-purple"]
+      ? [
+          "bg-[radial-gradient(circle_at_left_bottom,_#1c4a39_0%,_rgba(20,82,65,0.6)_70%),_radial-gradient(circle_at_right_top,_#b5d288_0%,_rgba(20,82,65,0.2)_80%)]",
+          "text-third-green",
+        ]
       : ["bg-light-gray", "text-light-gray"];
   const isFinalStep = (index: number) => index === numberOfSteps - 1;
   const labelName = ["Crie sua conta", "Seus Dados", "Endereço"];
@@ -47,15 +49,17 @@ export const Stepper: React.FC<StepperProps> = ({
               >
                 {labelName[index]}
               </label>
-
               {isFinalStep(index) ? null : (
-                <img src={line} alt="" className="w-[37px] pr-3" />
+                <div
+                  className={`w-[35px] h-[2px] mr-3 ${
+                  activeColor(index)[0]
+                }`}
+                ></div>
               )}
             </div>
           </React.Fragment>
         ))}
       </div>
-      <h3 className="text-2xl">{labelName[currentStep]}</h3>
     </div>
   );
 };
