@@ -3,34 +3,8 @@ import useLocalStore from "../hooks/useLocalStorage";
 import { Input } from "./Input";
 import { Stepper } from "./Stepper";
 import { useState } from "react";
-
-interface UserData {
-  userName: string;
-  email: string;
-  password: string;
-  repassword: string;
-}
-
-interface PersonalData {
-  fullName: string;
-  cpf: string;
-  gender: string;
-}
-
-interface Address {
-  cep: string;
-  street: string;
-  number: number;
-  complement: string;
-  state: string;
-  city: string;
-}
-
-interface Schema {
-  userData: UserData;
-  personalData: PersonalData;
-  address: Address;
-}
+import { Schema } from "../lib/UserSchema";
+import { supabase } from "../lib/Supabase";
 
 
 export const Form: React.FC = () => {
@@ -48,7 +22,7 @@ export const Form: React.FC = () => {
   } = form;
 
   const onSubmit: SubmitHandler<Schema> = (data) => {
-    submitHandle(data);
+    submitHandle(data)
   };
 
   const submitHandle = (data: Schema) => {
@@ -56,7 +30,23 @@ export const Form: React.FC = () => {
     if (currentStep < 2) {
       setCurrentStep((prev) => prev + 1);
     }
-    console.log(data);
+    if(currentStep == 2) {
+      async function createUser(data: Schema) {
+        await supabase.from('greenscape').insert({
+          user_name: data.userData.userName,
+          email: data.userData.email,
+          password: data.userData.password,
+          full_name: data.personalData.fullName,
+          cpf: data.personalData.cpf,
+          cep: data.address.cep,
+          street: data.address.state,
+          number: data.address.number,
+          state: data.address.state,
+          city: data.address.city
+        })
+      };
+      createUser(data)
+    }
   };
 
   const userDataInfo = getValues("userData")

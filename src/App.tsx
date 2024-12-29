@@ -7,7 +7,7 @@ import { Form } from "./components/Form";
 
 function App() {
 
-  const [isFormOpen, setIsFormOpen] = useState<Boolean>(false)
+  const [isFormOpen, setIsFormOpen] = useState<boolean>(true)
 
   return (
     <div className="flex justify-center items-center min-h-screen w-screen font-inter">
