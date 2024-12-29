@@ -3,7 +3,7 @@ import useLocalStore from "../hooks/useLocalStorage";
 import { Input } from "./Input";
 import { Stepper } from "./Stepper";
 import { useState } from "react";
-import { Schema } from "../lib/UserSchema";
+import { UserSchema } from "../lib/UserSchema";
 import { supabase } from "../lib/Supabase";
 
 
@@ -11,9 +11,9 @@ export const Form: React.FC = () => {
 
   const [currentStep, setCurrentStep] = useState(0)
 
-  const [storedData, setStoredData] = useLocalStore<Schema>("userData", {} as Schema);
+  const [storedData, setStoredData] = useLocalStore<UserSchema>("userData", {} as UserSchema);
 
-  const form = useForm<Schema>({ defaultValues: storedData });
+  const form = useForm<UserSchema>({ defaultValues: storedData });
   const {
     register,
     handleSubmit,
@@ -21,31 +21,67 @@ export const Form: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit: SubmitHandler<Schema> = (data) => {
+function resetFields(data: UserSchema) {
+  const getDefaultValue = (key: string): any => {
+    switch (key) {
+      case "number":
+        return 0;
+      default:
+        return "";
+    }
+  };
+  const reset = (obj: Record<string, any>, parentKey = "") => {
+    Object.keys(obj).forEach((key) => {
+      const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+      if (typeof obj[key] === "object" && obj[key] !== null) {
+        reset(obj[key], fullKey);
+      } else {
+        form.setValue(fullKey as keyof UserSchema, getDefaultValue(key))
+      }
+    });
+  };
+  reset(data);
+  setCurrentStep(0);
+  setStoredData({} as UserSchema)
+}
+
+  const onSubmit: SubmitHandler<UserSchema> = (data) => {
     submitHandle(data)
   };
 
-  const submitHandle = (data: Schema) => {
+  const submitHandle = (data: UserSchema) => {
     setStoredData(data);
     if (currentStep < 2) {
       setCurrentStep((prev) => prev + 1);
     }
     if(currentStep == 2) {
-      async function createUser(data: Schema) {
-        await supabase.from('greenscape').insert({
-          user_name: data.userData.userName,
-          email: data.userData.email,
-          password: data.userData.password,
-          full_name: data.personalData.fullName,
-          cpf: data.personalData.cpf,
-          cep: data.address.cep,
-          street: data.address.state,
-          number: data.address.number,
-          state: data.address.state,
-          city: data.address.city
-        })
+      async function createUser(data: UserSchema) {
+        const {error} = await supabase
+            .from("greenscape")
+            .select("email")
+            .eq('email', `${data.userData.email}`)
+
+            if (error) {
+              await supabase.from("greenscape").insert({
+                user_name: data.userData.userName,
+                email: data.userData.email,
+                full_name: data.personalData.fullName,
+                cpf: data.personalData.cpf,
+                cep: data.address.cep,
+                street: data.address.state,
+                number: data.address.number,
+                state: data.address.state,
+                city: data.address.city,
+              });
+              await supabase.auth.signUp({
+                email: data.userData.email,
+                password: data.userData.password
+              })
+            }
       };
       createUser(data)
+      resetFields(data)
     }
   };
 
@@ -122,6 +158,7 @@ const isValid = (
                   </div>
                   <div className="w-full">
                     <Input
+                      type="password"
                       error={errors.userData?.password}
                       placeholder="Senha"
                       {...register("userData.password", {
@@ -131,6 +168,7 @@ const isValid = (
                   </div>
                   <div className="w-full">
                     <Input
+                      type="password"
                       error={errors.userData?.repassword}
                       placeholder="Repita a senha"
                       {...register("userData.repassword", {

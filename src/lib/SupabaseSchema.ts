@@ -45,7 +45,6 @@ export type Database = {
           gender: string | null
           id: number
           number: number | null
-          password: string | null
           state: string | null
           street: string | null
           user_name: string | null
@@ -60,7 +59,6 @@ export type Database = {
           gender?: string | null
           id?: number
           number?: number | null
-          password?: string | null
           state?: string | null
           street?: string | null
           user_name?: string | null
@@ -75,7 +73,6 @@ export type Database = {
           gender?: string | null
           id?: number
           number?: number | null
-          password?: string | null
           state?: string | null
           street?: string | null
           user_name?: string | null

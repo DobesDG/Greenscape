@@ -19,7 +19,7 @@ interface Address {
   city: string;
 }
 
-export interface Schema {
+export interface UserSchema {
   userData: UserData;
   personalData: PersonalData;
   address: Address;
