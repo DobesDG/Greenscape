@@ -1,17 +1,17 @@
-interface UserData {
+export interface UserData {
   userName: string;
   email: string;
   password: string;
   repassword: string;
 }
 
-interface PersonalData {
+export interface PersonalData {
   fullName: string;
   cpf: string;
   gender: string;
 }
 
-interface Address {
+export interface Address {
   cep: string;
   street: string;
   number: number;

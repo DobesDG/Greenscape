@@ -1,62 +1,23 @@
-import { useForm, SubmitHandler, FieldErrors } from "react-hook-form";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useForm, SubmitHandler, UseFormReturn, FieldErrors } from "react-hook-form";
 import useLocalStore from "../hooks/useLocalStorage";
-import { Input } from "./Input";
 import { Stepper } from "./Stepper";
 import { useState } from "react";
-import { UserSchema } from "../lib/UserSchema";
+import { Address, UserData, PersonalData, UserSchema,  } from "../lib/UserSchema";
 import { supabase } from "../lib/Supabase";
+import { FormStep1 } from "./FormStep1";
+import { FormStep2 } from "./FormStep2";
+import { FormStep3 } from "./FormStep3";
 
 
-export const Form: React.FC = () => {
+const hasIncompleteData = (info: UserData | PersonalData | Address | null) => {
+  if (!info) return true;
+  return Object.values(info).some(
+    (value) => value === null || value === undefined || value === ""
+  );
+};
 
-  const [currentStep, setCurrentStep] = useState(0)
-
-  const [storedData, setStoredData] = useLocalStore<UserSchema>("userData", {} as UserSchema);
-
-  const form = useForm<UserSchema>({ defaultValues: storedData });
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    formState: { errors },
-  } = form;
-
-function resetFields(data: UserSchema) {
-  const getDefaultValue = (key: string): any => {
-    switch (key) {
-      case "number":
-        return 0;
-      default:
-        return "";
-    }
-  };
-  const reset = (obj: Record<string, any>, parentKey = "") => {
-    Object.keys(obj).forEach((key) => {
-      const fullKey = parentKey ? `${parentKey}.${key}` : key;
-
-      if (typeof obj[key] === "object" && obj[key] !== null) {
-        reset(obj[key], fullKey);
-      } else {
-        form.setValue(fullKey as keyof UserSchema, getDefaultValue(key))
-      }
-    });
-  };
-  reset(data);
-  setCurrentStep(0);
-  setStoredData({} as UserSchema)
-}
-
-  const onSubmit: SubmitHandler<UserSchema> = (data) => {
-    submitHandle(data)
-  };
-
-  const submitHandle = (data: UserSchema) => {
-    setStoredData(data);
-    if (currentStep < 2) {
-      setCurrentStep((prev) => prev + 1);
-    }
-    if(currentStep == 2) {
-      async function createUser(data: UserSchema) {
+async function createUser(data: UserSchema) {
         const {error} = await supabase
             .from("greenscape")
             .select("email")
@@ -80,43 +41,81 @@ function resetFields(data: UserSchema) {
               })
             }
       };
-      createUser(data)
-      resetFields(data)
-    }
+
+export const Form: React.FC = () => {
+
+  const [currentStep, setCurrentStep] = useState(0)
+
+  const [storedData, setStoredData] = useLocalStore<UserSchema>("userData", {} as UserSchema);
+
+  const form = useForm<UserSchema>({ defaultValues: storedData });
+  const {
+    handleSubmit,
+    getValues,
+  } = form;
+
+function resetFields(data: UserSchema) {
+  const getDefaultValue = (key: string): any => {
+     return key === "number" ? 0 : "";
   };
 
-  const userDataInfo = getValues("userData")
-  const personalDataInfo = getValues("personalData");
-  const addressInfo = getValues("address");
+  const reset = (obj: Record<string, unknown>, parentKey: string = "") => {
+    Object.entries(obj).forEach(([key, value]) => {
+      const fullKey = parentKey ? `${parentKey}.${key}` : key;
+
+      if (typeof value === "object" && value !== null) {
+        reset(value as Record<string, unknown>, fullKey); 
+      } else {
+        form.setValue(fullKey as keyof UserSchema, getDefaultValue(key));
+      }
+    });
+  };
+  reset(data as any);
+  setCurrentStep(0);
+  setStoredData({} as UserSchema)
+}
+
+  const onSubmit: SubmitHandler<UserSchema> = (data) => {
+    setStoredData(data);
+    if (currentStep < 2) {
+      setCurrentStep((prev) => prev + 1);
+      return;
+    }
+    createUser(data);
+    resetFields(data);
+  };
+
 
 const isValid = (
-  errors: FieldErrors,
-  userDataInfo: Record<string, any> | null,
-  personalDataInfo: Record<string, any> | null,
-  addressInfo: Record<string, any> | null
 ) => {
-  const hasIncompleteData = (info: Record<string, any> | null) => {
-    if (!info) return true;
-    return Object.values(info).some(value => value === null || value === undefined || value === '');
-  };
+   const errors = form.formState.errors as FieldErrors<UserSchema>;
+   const steps = [
+     {
+       data: getValues("userData"),
+       errorKey: "userData" as keyof FieldErrors<UserSchema>,
+     },
+     {
+       data: getValues("personalData"),
+       errorKey: "personalData" as keyof FieldErrors<UserSchema>,
+     },
+     {
+       data: getValues("address"),
+       errorKey: "address" as keyof FieldErrors<UserSchema>,
+     },
+   ];
+   
+   let maxValidStep = 0;
 
-  let step1IsValid = 0;
-  let step2IsValid = 0;
-  let step3IsValid = 0;
+   for (let i = 0; i < steps.length; i++) {
+     const { data, errorKey } = steps[i];
 
-  if (userDataInfo && !hasIncompleteData(userDataInfo)) {
-    step1IsValid = !errors.userData ? 1 : 0;
-  }
-  if (personalDataInfo && step1IsValid && !hasIncompleteData(personalDataInfo)) {
-    step2IsValid = !errors.personalData ? 2 : 0;
-  }
-  if (addressInfo && step2IsValid && !hasIncompleteData(addressInfo)) {
-    step3IsValid = !errors.addressData ? 3 : 0;
-  }
-  const isValidArray = [step1IsValid, step2IsValid, step3IsValid];
-  return isValidArray.sort()[2];
+     if (!data || hasIncompleteData(data) || errors[errorKey]) {
+       break;
+     }
+     maxValidStep = i + 1;
+   }
+   return maxValidStep;
 };
-
 
   return (
     <>
@@ -125,147 +124,12 @@ const isValid = (
           currentStep={currentStep}
           setCurrentStep={setCurrentStep}
           numberOfSteps={3}
-          isValid={isValid(errors, userDataInfo, personalDataInfo, addressInfo)}
+          isValid={isValid()}
         />
       </section>
       <section className="flex flex-col w-[800px] mt-8">
         <form onSubmit={handleSubmit(onSubmit)}>
-          {currentStep === 0 && (
-            <>
-              <div className="w-full flex justify-center items-center">
-                <div className="flex flex-col w-[327px] gap-4">
-                  <div className="w-full">
-                    <Input
-                      error={errors.userData?.userName}
-                      placeholder="Nome de usuário"
-                      {...register("userData.userName", {
-                        required: "Nome é obrigatório",
-                      })}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      error={errors.userData?.email}
-                      placeholder="E-mail"
-                      {...register("userData.email", {
-                        required: "E-mail é obrigatório",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "E-mail inválido",
-                        },
-                      })}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      type="password"
-                      error={errors.userData?.password}
-                      placeholder="Senha"
-                      {...register("userData.password", {
-                        required: "Senha é obrigatório",
-                      })}
-                    />
-                  </div>
-                  <div className="w-full">
-                    <Input
-                      type="password"
-                      error={errors.userData?.repassword}
-                      placeholder="Repita a senha"
-                      {...register("userData.repassword", {
-                        required: "Senha é obrigatório",
-                      })}
-                    />
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-          {currentStep == 1 && (
-            <div className="w-full flex justify-center items-center">
-              <div className="flex flex-col w-[327px] gap-4">
-                <div className="w-full">
-                  <Input
-                    error={errors.personalData?.fullName}
-                    placeholder="Nome completo"
-                    {...register("personalData.fullName", {
-                      required: "Nome completo é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.personalData?.cpf}
-                    placeholder="CPF"
-                    {...register("personalData.cpf", {
-                      required: "CPF é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.personalData?.gender}
-                    placeholder="Gênero"
-                    {...register("personalData.gender", {
-                      required: "Gênero é obrigatório",
-                    })}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          {currentStep == 2 && (
-            <div className="w-full flex justify-center items-center">
-              <div className="flex flex-col w-[327px] gap-4">
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.street}
-                    placeholder="Nome da sua rua"
-                    {...register("address.street", {
-                      required: "Nome da rua é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="flex gap-3 w-full">
-                  <div className="w-fit">
-                    <Input
-                      error={errors.address?.cep}
-                      placeholder="Seu CEP"
-                      {...register("address.cep", {
-                        required: "Nome completo é obrigatório",
-                      })}
-                    />
-                  </div>
-                  <div className="w-fit">
-                    <Input
-                      error={errors.address?.number}
-                      placeholder="N° da rua"
-                      {...register("address.number", {
-                        required: "Número da rua é obrigatório",
-                      })}
-                    />
-                  </div>
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.state}
-                    placeholder="Escolha o seu estado"
-                    {...register("address.state", {
-                      required: "Estado é obrigatório",
-                    })}
-                  />
-                </div>
-                <div className="w-full">
-                  <Input
-                    error={errors.address?.city}
-                    placeholder="Nome da sua cidade"
-                    {...register("address.city", {
-                      required: "Cidade é obrigatório",
-                    })}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          <FormBody form={form} steps={currentStep}/>
           <section className="flex justify-center items-center mt-6">
             <button
               type="submit"
@@ -273,7 +137,7 @@ const isValid = (
             >
               <div className="flex text-center justify-end items-center">
                 <div className="w-full flex justify-center">
-                  <p className="text-base">Avançar</p>
+                  <p className="text-base">{currentStep == 2 ? "Completar" : "Avançar"}</p>
                 </div>
               </div>
             </button>
@@ -283,3 +147,14 @@ const isValid = (
     </>
   );
 };
+
+const FormBody = ({form, steps}:{form:UseFormReturn<UserSchema, unknown, undefined>, steps:number}) => {
+  switch (steps) {
+    case 0:
+      return <FormStep1 form={form}/>;
+    case 1:
+      return <FormStep2 form={form}/>;
+    case 2:
+      return <FormStep3 form={form} />;
+  }
+}
