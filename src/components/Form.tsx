@@ -17,28 +17,28 @@ const hasIncompleteData = (info: UserData | PersonalData | Address | null) => {
   );
 };
 
-async function createUser(data: UserSchema) {
-        const {error} = await supabase
-            .from("greenscape")
-            .select("email")
-            .eq('email', `${data.userData.email}`)
+async function createUser(payload: UserSchema) {
+        const { data } = await supabase
+          .from("greenscape")
+          .select("email")
+          .eq("email", `${payload.userData.email}`);
 
-            if (error) {
+            if (data?.length == 0) {
               await supabase.from("greenscape").insert({
-                user_name: data.userData.userName,
-                email: data.userData.email,
-                full_name: data.personalData.fullName,
-                cpf: data.personalData.cpf,
-                cep: data.address.cep,
-                street: data.address.state,
-                number: data.address.number,
-                state: data.address.state,
-                city: data.address.city,
+                user_name: payload.userData.userName,
+                email: payload.userData.email,
+                full_name: payload.personalData.fullName,
+                cpf: payload.personalData.cpf,
+                cep: payload.address.cep,
+                street: payload.address.state,
+                number: payload.address.number,
+                state: payload.address.state,
+                city: payload.address.city,
               });
               await supabase.auth.signUp({
-                email: data.userData.email,
-                password: data.userData.password
-              })
+                email: payload.userData.email,
+                password: payload.userData.password,
+              });
             }
       };
 
