@@ -1,6 +1,8 @@
 import { UseFormReturn } from "react-hook-form";
 import { Input } from "./Input";
 import { UserSchema } from "../lib/UserSchema";
+import { Dropdown } from "./Dropdown";
+
 
 interface FormStepsProps {
   form: UseFormReturn<UserSchema, unknown, undefined>;
@@ -21,6 +23,10 @@ export const FormStep2: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Nome completo"
             {...register("personalData.fullName", {
               required: "Nome completo é obrigatório",
+              maxLength: {
+                value: 80,
+                message: "Número de caracteres excedido",
+              },
             })}
           />
         </div>
@@ -30,13 +36,17 @@ export const FormStep2: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="CPF"
             {...register("personalData.cpf", {
               required: "CPF é obrigatório",
+              maxLength: { value: 11, message: "CPF inválido" },
+              minLength: { value: 11, message: "CPF inválido" },
             })}
           />
         </div>
         <div className="w-full">
-          <Input
+          <Dropdown
+            type={"gender"}
             error={errors.personalData?.gender}
-            placeholder="Gênero"
+            setValue={form.setValue}
+            getValue={form.getValues}
             {...register("personalData.gender", {
               required: "Gênero é obrigatório",
             })}

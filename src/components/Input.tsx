@@ -20,13 +20,13 @@ export const Input: ForwardRefExoticComponent<InputProps> = forwardRef(
       >
         <input
           className={`pl-5 pr-4 py-2 border text-base bg-primary-brown bg-opacity-30 w-full h-[50px] placeholder-stone-800 ${
-            error?.type == "required" ? "border border-red-600" : "border"
+            error ? "border border-red-600" : "border"
           }`}
           {...InputProps}
           ref={ref}
         />
         <div className="flex flex-row justify-between mb-3">
-          {error?.type == "required" && (
+          {error && (
             <p className="text-[10px] text-red-600">{error.message}</p>
           )}
         </div>

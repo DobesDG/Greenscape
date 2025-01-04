@@ -21,6 +21,14 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Nome de usuário"
             {...register("userData.userName", {
               required: "Nome é obrigatório",
+              minLength: {
+                value: 3,
+                message: "Insira um nome de usuário com mais de 3 caracteres",
+              },
+              maxLength: {
+                value: 20,
+                message: "Insira um nome de usuário com menos de 20 caracteres",
+              },
             })}
           />
         </div>
@@ -44,6 +52,8 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Senha"
             {...register("userData.password", {
               required: "Senha é obrigatório",
+              minLength: {value: 4, message: "Insira uma senha com mais de 4 caracteres"},
+              maxLength: {value: 64, message: "Insira uma senha com menos de 64 caracteres"}
             })}
           />
         </div>
@@ -54,6 +64,11 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Repita a senha"
             {...register("userData.repassword", {
               required: "Senha é obrigatório",
+              validate: (value: string) => {
+                if (form.watch("userData.password") != value) {
+                  return "Senhas devem ser iguais"
+                }
+              }
             })}
           />
         </div>

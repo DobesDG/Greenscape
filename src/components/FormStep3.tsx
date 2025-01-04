@@ -1,6 +1,7 @@
 import { UseFormReturn } from "react-hook-form";
 import { Input } from "./Input";
 import { UserSchema } from "../lib/UserSchema";
+import { Dropdown } from "./Dropdown";
 
 interface FormStepsProps {
   form: UseFormReturn<UserSchema, unknown, undefined>;
@@ -36,6 +37,7 @@ export const FormStep3: React.FC<FormStepsProps> = ({ form }) => {
           </div>
           <div className="w-fit">
             <Input
+            type="number"
               error={errors.address?.number}
               placeholder="N° da rua"
               {...register("address.number", {
@@ -45,9 +47,11 @@ export const FormStep3: React.FC<FormStepsProps> = ({ form }) => {
           </div>
         </div>
         <div className="w-full">
-          <Input
+          <Dropdown
+            type = {"state"}
             error={errors.address?.state}
-            placeholder="Escolha o seu estado"
+            setValue={form.setValue}
+            getValue={form.getValues}
             {...register("address.state", {
               required: "Estado é obrigatório",
             })}

@@ -1,4 +1,4 @@
-import logo from "../assets/logo.png";
+import logo from "../assets/green_logo.png";
 import email from "../assets/email.png";
 import lock from "../assets/lock.png";
 import { useForm, SubmitHandler } from "react-hook-form";
