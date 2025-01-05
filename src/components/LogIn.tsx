@@ -18,30 +18,40 @@ export const LogIn: React.FC = () => {
   const onSubmit: SubmitHandler<AuthSchema> = async (authData: AuthSchema) => {
     const sucessLogInToast = () => toast.success("Conectado com sucesso!");
 
+    const errorNotConfirmed = () => toast.error("Confirme seu email");
+
     const { error } = await supabase.auth.signInWithPassword({
       email: authData.email,
       password: authData.password,
     });
-    if (error) {
-      const { data } = await supabase
-        .from("greenscape")
-        .select("email")
-        .eq("email", `${authData.email}`);
 
-      if (data?.length == 0) {
-        setError("email", {
-          type: "custom",
-          message: "E-mail não cadastrado",
-        });
-      } else {
-        setError("password", {
-          type: "custom",
-          message: "Senha inválida",
-        });
-      }
+    if (!error) {
+      sucessLogInToast();
       return;
     }
-    sucessLogInToast();
+
+    if (error.message == "Email not confirmed") {
+      errorNotConfirmed();
+      return;
+    }
+
+    const { data } = await supabase
+      .from("greenscape")
+      .select("email")
+      .eq("email", `${authData.email}`);
+
+    if (data?.length == 0) {
+      setError("email", {
+        type: "custom",
+        message: "E-mail não cadastrado",
+      });
+    } else {
+      setError("password", {
+        type: "custom",
+        message: "Senha inválida",
+      });
+    }
+    return;
   };
 
   return (
