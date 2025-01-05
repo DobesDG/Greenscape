@@ -32,6 +32,7 @@ export async function createUser(payload: UserSchema) {
     user_name: payload.userData.userName,
     email: payload.userData.email,
     full_name: payload.personalData.fullName,
+    gender: payload.personalData.gender,
     cpf: payload.personalData.cpf,
     cep: payload.address.cep,
     street: payload.address.state,
