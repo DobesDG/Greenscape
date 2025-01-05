@@ -100,7 +100,7 @@ export const LogIn: React.FC = () => {
                 </p>
               )}
             </div>
-            <button className="bg-none border text-[16px] text-third-green border-third-green rounded-full w-[210px] h-[50px]">
+            <button className="bg-none border text-[16px] text-third-green border-third-green rounded-full w-[210px] h-[50px] hover:bg-third-green hover:text-white">
               Entrar
             </button>
           </div>

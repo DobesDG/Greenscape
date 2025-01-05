@@ -2,6 +2,7 @@ import { UseFormReturn } from "react-hook-form";
 import { Input } from "./Input";
 import { UserSchema } from "../lib/UserSchema";
 import { Dropdown } from "./Dropdown";
+import { useMask } from "@react-input/mask";
 
 
 interface FormStepsProps {
@@ -13,6 +14,17 @@ export const FormStep2: React.FC<FormStepsProps> = ({ form }) => {
       register,
       formState: { errors },
     } = form;
+
+     const { ref, ...rest } = register("personalData.cpf", {
+              required: "CPF é obrigatório",
+              maxLength: { value: 14, message: "CPF inválido" },
+              minLength: { value: 14, message: "CPF inválido" },
+            });
+
+    const cpfRef = useMask({
+      mask: "___.___.___-__",
+      replacement: { _: /\d/ },
+    });
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -33,12 +45,12 @@ export const FormStep2: React.FC<FormStepsProps> = ({ form }) => {
         <div className="w-full">
           <Input
             error={errors.personalData?.cpf}
+            {...rest}
+            ref={(e) => {
+              ref(e);
+              cpfRef.current = e as HTMLInputElement;
+            }}
             placeholder="CPF"
-            {...register("personalData.cpf", {
-              required: "CPF é obrigatório",
-              maxLength: { value: 11, message: "CPF inválido" },
-              minLength: { value: 11, message: "CPF inválido" },
-            })}
           />
         </div>
         <div className="w-full">

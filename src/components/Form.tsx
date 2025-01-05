@@ -133,7 +133,7 @@ const isValid = (
           <section className="flex justify-center items-center mt-6">
             <button
               type="submit"
-              className="bg-none border text-third-green border-third-green rounded-full w-[210px] h-[50px]"
+              className="bg-none border text-third-green border-third-green rounded-full w-[210px] h-[50px] hover:bg-third-green hover:text-white"
             >
               <div className="flex text-center justify-end items-center">
                 <div className="w-full flex justify-center">

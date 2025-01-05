@@ -52,8 +52,7 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Senha"
             {...register("userData.password", {
               required: "Senha é obrigatório",
-              minLength: {value: 4, message: "Insira uma senha com mais de 4 caracteres"},
-              maxLength: {value: 64, message: "Insira uma senha com menos de 64 caracteres"}
+              minLength: {value: 9, message: "Insira uma senha com mais de 9 caracteres"}
             })}
           />
         </div>

@@ -38,7 +38,7 @@ function App() {
               </h1>
               <button
                 onClick={() => setIsFormOpen((prev) => !prev)}
-                className="bg-none border text-white border-white rounded-full w-[210px] h-[50px] mt-[50px]"
+                className="bg-none border text-white border-white rounded-full w-[210px] h-[50px] mt-[50px] hover:bg-white hover:text-third-green hover:border-third-green"
               >
                 Inscrever-se
               </button>

@@ -15,6 +15,38 @@ interface DropdownProps extends HTMLProps<HTMLInputElement> {
   getValue: UseFormGetValues<UserSchema>;
 }
 
+  // eslint-disable-next-line react-refresh/only-export-components
+  export const States = {
+      AC: "Acre",
+      AL: "Alagoas",
+      AP: "Amapá",
+      AM: "Amazonas",
+      BA: "Bahia",
+      CE: "Ceará",
+      DF: "Distrito Federal",
+      ES: "Espirito Santo",
+      GO: "Goiás",
+      MA: "Maranhão",
+      MS: "Mato Grosso do Sul",
+      MT: "Mato Grosso",
+      MG: "Minas Gerais",
+      PA: "Pará",
+      PB: "Paraíba",
+      PR: "Paraná",
+      PE: "Pernambuco",
+      PI: "Piauí",
+      RJ: "Rio de Janeiro",
+      RS: "Rio Grande do Sul",
+      RO: "Rondônia",
+      RR: "Roraima",
+      SC: "Santa Catarina",
+      SP: "São Paulo",
+      SE: "Sergipe",
+      TO: "Tocantins",
+    };
+
+const Genders = ["Masculino", "Feminino", "Outro"];
+
 export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   ({ type, error, setValue, getValue }, ref) => {
 
@@ -22,39 +54,9 @@ export const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
     const isGender = type === "gender";
 
-    const Genders = ["Masculino", "Feminino", "Outro"];
+    const Arr = isGender ? Genders : Object.values(States);
 
-    const States = [
-      "Acre",
-      "Alagoas",
-      "Amapá",
-      "Amazonas",
-      "Bahia",
-      "Ceará",
-      "Distrito Federal",
-      "Espirito Santo",
-      "Goiás",
-      "Maranhão",
-      "Mato Grosso do Sul",
-      "Mato Grosso",
-      "Minas Gerais",
-      "Pará",
-      "Paraíba",
-      "Paraná",
-      "Pernambuco",
-      "Piauí",
-      "Rio de Janeiro",
-      "Rio Grande do Norte",
-      "Rio Grande do Sul",
-      "Rondônia",
-      "Roraima",
-      "Santa Catarina",
-      "São Paulo",
-      "Sergipe",
-      "Tocantins",
-    ];
-
-    const Arr = isGender ? Genders : States;
+    console.log(getValue("address.state"));
 
     const placeholder = isGender
       ? getValue("personalData.gender") || "Gênero"
