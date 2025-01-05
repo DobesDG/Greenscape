@@ -11,7 +11,7 @@ export const Stepper: React.FC<StepperProps> = ({
   currentStep,
   setCurrentStep,
   numberOfSteps,
-  isValid
+  isValid,
 }) => {
   const activeColor = (index: number) =>
     currentStep == index
@@ -24,10 +24,10 @@ export const Stepper: React.FC<StepperProps> = ({
   const labelName = ["Crie sua conta", "Seus Dados", "Endereço"];
 
   const possibleSteps = (index: number, isValid: number) => {
-    if (index <= isValid-1) {
-      return (setCurrentStep(index))
+    if (index <= isValid - 1) {
+      return setCurrentStep(index);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center mt-16">
@@ -51,9 +51,7 @@ export const Stepper: React.FC<StepperProps> = ({
               </label>
               {isFinalStep(index) ? null : (
                 <div
-                  className={`w-[35px] h-[2px] mr-3 ${
-                  activeColor(index)[0]
-                }`}
+                  className={`w-[35px] h-[2px] mr-3 ${activeColor(index)[0]}`}
                 ></div>
               )}
             </div>

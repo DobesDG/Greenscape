@@ -1,5 +1,5 @@
 import { UseFormReturn } from "react-hook-form";
-import { Input } from "./Input"
+import { Input } from "./Input";
 import { UserSchema } from "../lib/UserSchema";
 
 interface FormStepsProps {
@@ -7,10 +7,10 @@ interface FormStepsProps {
 }
 
 export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
-    const {
-      register,
-      formState: { errors },
-    } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
 
   return (
     <div className="w-full flex justify-center items-center">
@@ -52,7 +52,10 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
             placeholder="Senha"
             {...register("userData.password", {
               required: "Senha é obrigatório",
-              minLength: {value: 9, message: "Insira uma senha com mais de 9 caracteres"}
+              minLength: {
+                value: 9,
+                message: "Insira uma senha com mais de 9 caracteres",
+              },
             })}
           />
         </div>
@@ -65,9 +68,9 @@ export const FormStep1: React.FC<FormStepsProps> = ({ form }) => {
               required: "Senha é obrigatório",
               validate: (value: string) => {
                 if (form.watch("userData.password") != value) {
-                  return "Senhas devem ser iguais"
+                  return "Senhas devem ser iguais";
                 }
-              }
+              },
             })}
           />
         </div>

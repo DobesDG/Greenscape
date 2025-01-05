@@ -4,27 +4,26 @@ import { UserSchema } from "../lib/UserSchema";
 import { Dropdown } from "./Dropdown";
 import { useMask } from "@react-input/mask";
 
-
 interface FormStepsProps {
   form: UseFormReturn<UserSchema, unknown, undefined>;
 }
 
 export const FormStep2: React.FC<FormStepsProps> = ({ form }) => {
-    const {
-      register,
-      formState: { errors },
-    } = form;
+  const {
+    register,
+    formState: { errors },
+  } = form;
 
-     const { ref, ...rest } = register("personalData.cpf", {
-              required: "CPF é obrigatório",
-              maxLength: { value: 14, message: "CPF inválido" },
-              minLength: { value: 14, message: "CPF inválido" },
-            });
+  const { ref, ...rest } = register("personalData.cpf", {
+    required: "CPF é obrigatório",
+    maxLength: { value: 14, message: "CPF inválido" },
+    minLength: { value: 14, message: "CPF inválido" },
+  });
 
-    const cpfRef = useMask({
-      mask: "___.___.___-__",
-      replacement: { _: /\d/ },
-    });
+  const cpfRef = useMask({
+    mask: "___.___.___-__",
+    replacement: { _: /\d/ },
+  });
 
   return (
     <div className="w-full flex justify-center items-center">

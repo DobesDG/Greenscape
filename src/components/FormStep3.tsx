@@ -3,7 +3,7 @@ import { Input } from "./Input";
 import { UserSchema } from "../lib/UserSchema";
 import { Dropdown, States } from "./Dropdown";
 import { useMask } from "@react-input/mask";
-import cep from "cep-promise" ;
+import cep from "cep-promise";
 import { useEffect } from "react";
 
 interface FormStepsProps {
@@ -11,44 +11,44 @@ interface FormStepsProps {
 }
 
 export const FormStep3: React.FC<FormStepsProps> = ({ form }) => {
-    const {
-      register,
-      watch,
-      setValue,
-      formState: { errors },
-    } = form;
+  const {
+    register,
+    watch,
+    setValue,
+    setError,
+    formState: { errors },
+  } = form;
 
-    const cepValue = watch("address.cep");
+  const cepValue = watch("address.cep");
 
-    useEffect(() => {
-      const cepFinder = async (cepString: string) => {
-        const cepRegex = /^\d{5}.\d{3}$/;
-        if (cepRegex.test(cepString)) {
-          try {
-            const cepData = await cep(cepString.replace("-",""));
-            setValue("address.city",cepData.city)
-            setValue("address.street", cepData.street);
-            setValue("address.state", States[cepData.state as keyof typeof States]);
-            console.log(cepData);
-          } catch (error) {
-            console.log(error);
-          }
+  useEffect(() => {
+    const cepFinder = async (cepString: string) => {
+      const cepRegex = /^\d{5}.\d{3}$/;
+      if (cepRegex.test(cepString)) {
+        try {
+          const cepData = await cep(cepString.replace("-", ""));
+          setValue("address.city", cepData.city);
+          setValue("address.street", cepData.street);
+          setValue(
+            "address.state",
+            States[cepData.state as keyof typeof States]
+          );
+        } catch {
+          return;
         }
-      };
-      cepFinder(cepValue);
-      console.log(cepValue);
-    }, [cepValue, setValue]);
+      }
+    };
+    cepFinder(cepValue);
+  }, [cepValue, setValue, setError]);
 
-    const { ref, ...rest } = register("address.cep", {
-      required: "Nome completo é obrigatório",
-    });
+  const { ref, ...rest } = register("address.cep", {
+    required: "Nome completo é obrigatório",
+  });
 
-    const cepRef = useMask({
-      mask: "_____-___",
-      replacement: { _: /\d/ },
-    });
-
-    
+  const cepRef = useMask({
+    mask: "_____-___",
+    replacement: { _: /\d/ },
+  });
 
   return (
     <div className="w-full flex justify-center items-center">

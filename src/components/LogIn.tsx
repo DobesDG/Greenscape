@@ -4,6 +4,7 @@ import lock from "../assets/lock.png";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { AuthSchema } from "../lib/AuthSchema";
 import { supabase } from "../lib/Supabase";
+import { toast } from "react-toastify";
 
 export const LogIn: React.FC = () => {
   const form = useForm<AuthSchema>();
@@ -14,36 +15,33 @@ export const LogIn: React.FC = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit: SubmitHandler<AuthSchema> = (data) => {
-    validateLogIn(data);
-  };
+  const onSubmit: SubmitHandler<AuthSchema> = async (authData: AuthSchema) => {
+    const sucessLogInToast = () => toast.success("Conectado com sucesso!");
 
-  const validateLogIn = (authData: AuthSchema) => {
-    console.log({ authData });
-    async function signInWithEmail(authData: AuthSchema) {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: authData.email,
-        password: authData.password,
-      });
-      console.log({ data, error });
-      if (error) {
-        const { data } = await supabase
-          .from("greenscape")
-          .select("email")
-          .eq("email", `${authData.email}`);
-        
-        return data?.length == 0
-          ? setError("email", {
-              type: "custom",
-              message: "E-mail não cadastrado",
-            })
-          : setError("password", {
-              type: "custom",
-              message: "Senha inválida",
-            });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: authData.email,
+      password: authData.password,
+    });
+    if (error) {
+      const { data } = await supabase
+        .from("greenscape")
+        .select("email")
+        .eq("email", `${authData.email}`);
+
+      if (data?.length == 0) {
+        setError("email", {
+          type: "custom",
+          message: "E-mail não cadastrado",
+        });
+      } else {
+        setError("password", {
+          type: "custom",
+          message: "Senha inválida",
+        });
       }
+      return;
     }
-    signInWithEmail(authData);
+    sucessLogInToast();
   };
 
   return (
