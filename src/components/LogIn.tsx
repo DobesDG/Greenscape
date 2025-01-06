@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { AuthSchema } from "../lib/AuthSchema";
 import { supabase } from "../lib/Supabase";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 export const LogIn: React.FC = () => {
   const form = useForm<AuthSchema>();
@@ -14,6 +15,8 @@ export const LogIn: React.FC = () => {
     setError,
     formState: { errors },
   } = form;
+
+  const nav = useNavigate();
 
   const onSubmit: SubmitHandler<AuthSchema> = async (authData: AuthSchema) => {
     const sucessLogInToast = () => toast.success("Conectado com sucesso!");
@@ -27,6 +30,7 @@ export const LogIn: React.FC = () => {
 
     if (!error) {
       sucessLogInToast();
+      nav(`/user/${authData.email}`);
       return;
     }
 
